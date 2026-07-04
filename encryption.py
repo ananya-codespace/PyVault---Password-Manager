@@ -5,7 +5,7 @@ import base64
 
 # generating key that will be used for encryption and decryption
 def generate_key(master_password, salt):
-    # pbkdf2_hmac will generate the same key as we use the same password and salt
+    # pbkdf2_hmac will generate the same key as we use the same password and salt - symmetric key 
     temp_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
     # pbkdf2_hmac returns raw bytes but Fernet needs base64 encoded bytes
     key = base64.urlsafe_b64encode(temp_key)
