@@ -40,6 +40,9 @@ python vault.py
 ## What I Learned
 - Secure password hashing using `pbkdf2_hmac` with a random salt, and why salting prevents identical passwords from producing identical hashes
 - Deriving a reusable encryption key from a password + salt instead of storing the key itself
+- Key and Hash generated using master password + salt using pbkdf2_hmac that produces raw bytes 
+   - `hash` - raw bytes stored directly in database
+   - `key` - raw bytes converted using `base64 encoding`
 - Symmetric encryption/decryption using `Fernet` from the `cryptography` library
 - Basic SQLite operations in Python: creating tables, parameterized queries with `?` placeholders, and the difference between `fetchone()` and `fetchall()`
 - Masking the password with `*` rather than plain text
