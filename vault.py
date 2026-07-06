@@ -27,8 +27,44 @@ if stored_hash == None and stored_salt == None:
 # every time the user has to enter the master password to use PyVault
 password_verify = getpass("Enter Master Password: ")
 status = auth.verify_master_password(password_verify, stored_hash,stored_salt)
+
 if status == True:
-    print("Unlocked!")
+    print("Unlocked!\n")
+    # key generated using salt and master password (not the hash)
+    key = enc.generate_key(password_verify, stored_salt)
+    while True:
+        print("What do u want to do?")
+        print("1. Add Password\n2. Get Password\n3. List all Sites\n4.Delete Entry\n5. Exit")
+        choice = int(input("\n> "))
+
+        if choice == 1:
+            print("> Enter the following details...")
+            site = input("> Site: ")
+            username = input("> Username: ")
+            password = getpass("> Password: ")
+            encrypted_password = enc.encrypt_password(password, key)
+            db.add_site_password(site, username, encrypted_password)
+            print("Password Encrypted and Saved!")
+
+        elif choice == 2:
+            site = input("> Enter the site: ")
+            username, password = db.get_site_password(site)
+            # if the site does not exist
+            if username == None: 
+                print("Site Not Found!")
+            else: 
+                decrypted_password = enc.decrypt_password(password, key)
+                print("Username: ", username)
+                print("Password: ", decrypted_password)
+
+        elif choice == 3:
+            rows = db.list_sites()
+            for site, username in rows:
+                print("Site: ", site) 
+                print("Username: ", username)
+                print(" ******************** ")
+
+
 else:
     print("Wrong Master Password!")
     exit()  # the program stops
