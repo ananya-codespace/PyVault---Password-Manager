@@ -88,7 +88,7 @@ def list_sites():
     con = sqlite3.connect("vault.db")
     cur = con.cursor()
     cur.execute("SELECT site, username FROM vault")
-    # fetchall() - always returns a list, even if empty []
+    # fetchall() - always returns a list of tuples, even if empty []
     rows = cur.fetchall()
     con.close()
     return rows
