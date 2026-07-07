@@ -17,15 +17,17 @@ if stored_hash == None and stored_salt == None:
     # asking user to confirm the password
     confirm =  getpass("> Confirm Master Password: ")
     if password != confirm:
-        print("Passwords don't match!")
+        print("Passwords don't match!\n")
         exit()
+    else:
+        print("Master password set successfully!\n")
     hash, salt = auth.set_master_password(password)
     db.save_master_password(hash, salt)
     # db has the new values but still None in memory, hence manually updating the values, or will have to call get_master_password()
     stored_hash, stored_salt = hash, salt
 
 # every time the user has to enter the master password to use PyVault
-password_verify = getpass("> Enter Master Password: ")
+password_verify = getpass("\n> Enter Master Password: ")
 status = auth.verify_master_password(password_verify, stored_hash,stored_salt)
 
 if status == True:
@@ -34,7 +36,7 @@ if status == True:
     key = enc.generate_key(password_verify, stored_salt)
     while True:
         print("> What do u want to do?")
-        print("1. Add Password\n2. Get Password\n3. List all Sites\n4.Delete Entry\n5. Exit")
+        print("1. Add Password\n2. Get Password\n3. List all Sites\n4. Delete Entry\n5. Exit")
         choice = int(input("\n> "))
 
         # add password 
@@ -45,7 +47,7 @@ if status == True:
             password = getpass("> Password: ")
             encrypted_password = enc.encrypt_password(password, key)
             db.add_site_password(site, username, encrypted_password)
-            print("Password Encrypted and Saved!")
+            print("Password Encrypted and Saved!\n")
 
         # get password 
         elif choice == 2:
@@ -53,24 +55,25 @@ if status == True:
             username, password = db.get_site_password(site)
             # check if site exists or not
             if username == None: 
-                print("Site Not Found!")
+                print("Site Not Found!\n")
             else: 
                 decrypted_password = enc.decrypt_password(password, key)
-                print("Username: ", username)
-                print("Password: ", decrypted_password)
+                print("Username:", username)
+                print("Password:", decrypted_password)
+                print()
 
         # list all sites
         elif choice == 3:
             rows = db.list_sites()
             # check if any passwords saved yet
             if rows == []:
-                print("No passwords saved yet!")
+                print("No passwords saved yet!\n")
             else:
                 # Tuple Unpacking 
                 for site, username in rows:
-                    print("Site: ", site) 
-                    print("Username: ", username)
-                    print(" ******************** ")
+                    print("Site:", site) 
+                    print("Username:", username)
+                    print("\n ******************** \n")
         
         # delete entry
         elif choice == 4:
@@ -78,54 +81,20 @@ if status == True:
             # check if site exists or not
             username, _ = db.get_site_password(site)  # The '_' is a Python convention for "I don't need this value" 
             if username == None:
-                print("Site Not Found!")
+                print("Site Not Found!\n")
             else:
                 db.delete_site_password(site)
-                print("Entry deleted successfully!")
+                print("Entry deleted successfully!\n")
 
         # exit
         elif choice == 5:
-            print("THANK YOU!")
+            print("Exiting...")
+            print("THANK YOU!\n")
             exit()
 
         else:
-            print("Invalid choice, choose again...")
+            print("Invalid choice, choose again...\n")
 
 else:
-    print("Wrong Master Password!")
+    print("Wrong Master Password!\n")
 
-
-
-
-
-
-
-
-
-
-
-"""
-$ python vault.py
-
-🔐 Welcome to PyVault
-Enter master password: ********
-✅ Unlocked!
-
-What do you want to do?
-1. Add password
-2. Get password
-3. List all sites
-4. Delete entry
-5. Exit
-
-> 1
-Site: instagram.com
-Username: john@gmail.com
-Password: ************
-✅ Saved and encrypted!
-
-> 2
-Site: instagram.com
-✅ Username: john@gmail.com
-✅ Password: MyP@ssw0rd123
-"""
